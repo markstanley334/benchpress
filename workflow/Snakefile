@@ -77,7 +77,7 @@ for p in Path("workflow/rules/evaluation/").iterdir():
 
 # ── Add the new 'bagging' property to each benchmark_setup entry ──
 bmk_props = schema["properties"]["benchmark_setup"]["items"]["properties"]
-bmk_props["bagging"] = {"$ref": "../rules/evaluation/bagging/schema.json"}
+bmk_props["bagging"] = {"$ref": "workflow/rules/evaluation/bagging/schema.json"}
 
 
 # Yes this is a hack. But it works probably. Any better ideas?

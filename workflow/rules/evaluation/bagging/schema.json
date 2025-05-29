@@ -1,4 +1,6 @@
 {
+    "description": "Schema for bagging evaluation rules in workflow",
+    "title": "bagging",
     "oneOf": [
         { "type": "null" },
         { "enum": ["standard"] },
