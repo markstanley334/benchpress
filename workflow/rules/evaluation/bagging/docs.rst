@@ -20,3 +20,9 @@ bagging: ["weighted",
 
 The standard bagging method gives all algorithms equal weight in the final prediction, with threshold set to 0.5 by default. The threshold number dictates that if the proportion of votes for an edge exceeds this threshold, that edge is included in the final adjeacency matrix.
 The weighted bagging method allows for custom weights to be assigned to each algorithm, which can be specified in the configuration. The threshold can also be adjusted to control the inclusion of edges based on the proportion of votes.
+
+
+
+# # ── Add the new 'bagging' property to each benchmark_setup entry ──
+# bmk_props = schema["properties"]["benchmark_setup"]["items"]["properties"]
+# bmk_props["bagging"] = {"$ref": "workflow/rules/evaluation/bagging/schema.json"}

@@ -22,7 +22,7 @@
                     "type": "object",
                     "minProperties": 1,
                     "patternProperties": {
-                        "^[^\\s]+$": { "type": "number", "minimum": 0, "maximum": 1 }
+                        "^[^\\s]+$": {"$ref": "../../../schemas/definitions.schema.json#/definitions/nonnegnum"}
                     },
                     "additionalProperties": false
                 }

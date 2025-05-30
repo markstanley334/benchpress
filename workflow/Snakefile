@@ -75,10 +75,6 @@ for p in Path("workflow/rules/evaluation/").iterdir():
     }
 
 
-# ── Add the new 'bagging' property to each benchmark_setup entry ──
-bmk_props = schema["properties"]["benchmark_setup"]["items"]["properties"]
-bmk_props["bagging"] = {"$ref": "workflow/rules/evaluation/bagging/schema.json"}
-
 
 # Yes this is a hack. But it works probably. Any better ideas?
 # Generate random hash for the temporary schema file
@@ -115,6 +111,7 @@ include: "rules/validate.py"
 include: "rules/module_patterns.py"
 include: "rules/module_strings.py"
 include: "rules/filename_patterns.py"
+
 
 # Include the graph modules
 for p in Path("workflow/rules/graph/").glob("[!.]*"):
@@ -196,3 +193,4 @@ rule convert_edge_constraints:
         package = "{package}"
     script:
         "scripts/utils/convert_edge_constraints_all.R"
+
