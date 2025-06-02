@@ -1,0 +1,60 @@
+{
+  "benchmark_setup": [
+    {
+      "data": [
+        {
+          "graph_id": null,
+          "parameters_id": null,
+          "data_id": "cleaned_simulated_data.csv",
+          "seed_range": null
+        }
+      ],
+      "evaluation": {
+        "ggally_ggpairs": false,
+        "graph_estimation": {
+            "ids": [],
+            "convert_to": ["cpdag"],
+            "graphs": true,
+            "adjmats": true,
+            "diffplots": false,
+            "csvs": true,
+            "graphvizcompare": false
+          },
+        "mcmc_traj_plots": [],
+        "mcmc_heatmaps": [],
+        "mcmc_autocorr_plots": [],
+        "bagging": ["weighted",{"threshold":0.9},{"sampleID":5,"sampleID2":6}]
+      },
+      "title": "baggingtest"
+    }
+  ],
+  "resources": {
+    "data": {},
+    "graph": {},
+    "parameters": {},
+    "structure_learning_algorithms": {
+      "tetrad_boss": [
+        {
+          "id": "boss-sem-bic",
+          "score": "sem-bic-score",
+          "datatype": "continuous",
+          "useBes": true,
+          "allowInternalRandomess": false,
+          "samplePrior": 0,
+          "semBicStructurePrior": 0,
+          "penaltyDiscount": [
+            0.1,
+            0.5,
+            1,
+            1.5,
+            2.0,
+            2.5,
+            3.0
+          ],
+          "timeout": null,
+          "edgeConstraints": null 
+        }
+      ]
+    }
+  }
+}

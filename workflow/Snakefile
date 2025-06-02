@@ -72,7 +72,9 @@ for p in Path("workflow/rules/evaluation/").iterdir():
     item = schema["definitions"]["benchmark_setup"]["properties"]["evaluation"]["properties"]
     item[p.name] = {
         "$ref": "../rules/evaluation/{}/schema.json".format(p.name)
+        
     }
+    print(p.name)
 
 
 
@@ -85,6 +87,21 @@ with open("workflow/"+tmp_schema, "w") as outfile:
 snakemake.utils.validate(config, tmp_schema)
 # remove the temporary schema file
 os.remove("workflow/"+tmp_schema)
+
+print("------------------------------------------------------")
+print("CONFIG FILE WORKED")
+print("------------------------------------------------------")
+print("------------------------------------------------------")
+print("CONFIG FILE WORKED")
+print("------------------------------------------------------")
+print("------------------------------------------------------")
+print("CONFIG FILE WORKED")
+print("------------------------------------------------------")
+print("------------------------------------------------------")
+print("CONFIG FILE WORKED")
+print("------------------------------------------------------")
+
+
 
 
 include: "rules/docker_images.smk"

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import numpy as np
 import pandas as pd
 import sys
 import os
@@ -28,8 +29,11 @@ else:
         weights.append(weight_obj.get(seed, 0))
     threshold = thr_obj["threshold"]
 
+    for i in range(len(weights)):
+        weights[i] = weights[i] / sum(weights)
+
+
 # 3. Compute weighted average adjacency
-import numpy as np
 stack = np.stack([df.values for df in mats], axis=2)
 avg_mat = np.tensordot(stack, weights, axes=([2], [0]))
 

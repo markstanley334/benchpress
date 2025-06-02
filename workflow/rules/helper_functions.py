@@ -12,11 +12,13 @@ def edge_constraints_bidag(wildcards):
     else:
         return f"resources/constraints/data=/"+alg_input_data()+f"/{wildcards.edgeConstraints}-bidag"
 
+
 def edge_constraints_gobnilp(wildcards):
     if wildcards.edgeConstraints == "None":
         return []
     else:
         return f"resources/constraints/data=/"+alg_input_data()+f"/{wildcards.edgeConstraints}-gobnilp"
+
 
 def edge_constraints_bnlearn(wildcards):
     if wildcards.edgeConstraints == "None":
@@ -24,11 +26,13 @@ def edge_constraints_bnlearn(wildcards):
     else:
         return f"resources/constraints/data=/"+alg_input_data()+f"/{wildcards.edgeConstraints}-bnlearn"
 
+
 def edge_constraints_pcalg(wildcards):
     if wildcards.edgeConstraints == "None":
         return []
     else:
         return f"resources/constraints/data=/"+alg_input_data()+f"/{wildcards.edgeConstraints}-pcalg"
+
 
 def edge_constraints_mvpc(wildcards):
     if wildcards.edgeConstraints == "None":
@@ -36,11 +40,13 @@ def edge_constraints_mvpc(wildcards):
     else:
         return f"resources/constraints/data=/"+alg_input_data()+f"/{wildcards.edgeConstraints}-mvpc"
 
+
 def edge_constraints_bips_tpc(wildcards):
     if wildcards.edgeConstraints == "None":
         return []
     else:
         return f"resources/constraints/data=/"+alg_input_data()+f"/{wildcards.edgeConstraints}-bips_tpc"
+
 
 def get_seed_range(seed_range):
     if seed_range == None:
@@ -100,10 +106,15 @@ def get_active_rules(wildcards):
         evaluation = bmark_setup["evaluation"]
         bmark_setup_title = bmark_setup["title"]
 
+        if "bagging" in evaluation:
+            rules.append("results/output/"+bmark_setup_title +
+                         "/bagging/bagging.done")
+
         # graph_estimation
         if "graph_estimation" in evaluation and evaluation["graph_estimation"]["ids"] != []:
             # Create a done key.done file for each graph_type.
-            graph_types = evaluation["graph_estimation"]["convert_to"] if evaluation["graph_estimation"]["convert_to"] != None else ["original"]
+            graph_types = evaluation["graph_estimation"]["convert_to"] if evaluation["graph_estimation"]["convert_to"] != None else [
+                "original"]
             graph_types += ["original"]
 
             # go through all active features and create a done file for each.
@@ -118,28 +129,36 @@ def get_active_rules(wildcards):
                     # Cound the data setups and create a done file for each.
                     n_comb = 0
                     for sim_setup in bmark_setup["data"]:
-                        seed=get_seed_range(sim_setup["seed_range"])
-                        adjmat=gen_adjmat_string_from_conf(sim_setup["graph_id"], seed),
-                        parameters=gen_parameter_string_from_conf(sim_setup["parameters_id"], seed),
-                        data=gen_data_string_from_conf(sim_setup["data_id"], seed, seed_in_path=False)
+                        seed = get_seed_range(sim_setup["seed_range"])
+                        adjmat = gen_adjmat_string_from_conf(
+                            sim_setup["graph_id"], seed),
+                        parameters = gen_parameter_string_from_conf(
+                            sim_setup["parameters_id"], seed),
+                        data = gen_data_string_from_conf(
+                            sim_setup["data_id"], seed, seed_in_path=False)
 
                         # count total number of combinations of the three above
-                        n_data = len(data) if isinstance(data, list) and len(data) != 0 else 1
-                        n_parameters = len(parameters) if isinstance(parameters, list) and parameters != [] else 1
-                        n_adjmat = len(adjmat) if isinstance(adjmat, list) and adjmat != [] else 1
+                        n_data = len(data) if isinstance(
+                            data, list) and len(data) != 0 else 1
+                        n_parameters = len(parameters) if isinstance(
+                            parameters, list) and parameters != [] else 1
+                        n_adjmat = len(adjmat) if isinstance(
+                            adjmat, list) and adjmat != [] else 1
                         n_comb += n_data*n_parameters*n_adjmat if n_data*n_parameters*n_adjmat != 0 else 1
 
                     for data_index in range(n_comb):
                         for alg in active_algorithms(bmark_setup, eval_method="graph_estimation"):
                             for graph_type in graph_types:
-                                rules.append("results/output/"+bmark_setup_title+"/graph_estimation/dataset_"+str(data_index+1)+"/graph_type="+graph_type+"/"+feature+"/"+alg+".done")
+                                rules.append("results/output/"+bmark_setup_title+"/graph_estimation/dataset_"+str(
+                                    data_index+1)+"/graph_type="+graph_type+"/"+feature+"/"+alg+".done")
 
         # mcmc_traj_plots
         if "mcmc_traj_plots" in evaluation and len(evaluation["mcmc_traj_plots"]) > 0:
             for item in evaluation["mcmc_traj_plots"]:
                 # If at least one is active, create a done file.
                 if ("active" not in item) or item["active"] == True:
-                    rules.append("results/output/"+bmark_setup_title+"/mcmc_traj_plots/mcmc_traj_plots.done")
+                    rules.append("results/output/"+bmark_setup_title +
+                                 "/mcmc_traj_plots/mcmc_traj_plots.done")
                     break
 
         # mcmc_heatmaps
@@ -147,7 +166,8 @@ def get_active_rules(wildcards):
             for item in evaluation["mcmc_heatmaps"]:
                 # If at least one is active, create a done file.
                 if ("active" not in item) or item["active"] == True:
-                    rules.append("results/output/"+bmark_setup_title+"/mcmc_heatmaps/mcmc_heatmaps.done")
+                    rules.append("results/output/"+bmark_setup_title +
+                                 "/mcmc_heatmaps/mcmc_heatmaps.done")
                     break
 
         # mcmc_autocorr_plots
@@ -155,28 +175,33 @@ def get_active_rules(wildcards):
             for item in evaluation["mcmc_autocorr_plots"]:
                 # If at least one is active, create a done file.
                 if ("active" not in item) or item["active"] == True:
-                    rules.append("results/output/"+bmark_setup_title+"/mcmc_autocorr_plots/mcmc_autocorr_plots.done")
+                    rules.append("results/output/"+bmark_setup_title +
+                                 "/mcmc_autocorr_plots/mcmc_autocorr_plots.done")
                     break
 
         # graph_true_plots
         if "graph_true_plots" in evaluation and evaluation["graph_true_plots"] == True:
-            rules.append("results/output/"+bmark_setup_title+"/graph_true_plots/graph_true_plots.done")
+            rules.append("results/output/"+bmark_setup_title +
+                         "/graph_true_plots/graph_true_plots.done")
 
         if "graph_true_stats" in evaluation and evaluation["graph_true_stats"] == True:
-            rules.append("results/output/"+bmark_setup_title+"/graph_true_stats/graph_true_stats.done")
+            rules.append("results/output/"+bmark_setup_title +
+                         "/graph_true_stats/graph_true_stats.done")
 
         # graph_plots
         if "graph_plots" in evaluation and len(evaluation["graph_plots"]) > 0:
-            rules.append("results/output/"+bmark_setup_title+"/graph_plots/graph_plots.done")
+            rules.append("results/output/"+bmark_setup_title +
+                         "/graph_plots/graph_plots.done")
 
         # ggally_ggpairs
         if "ggally_ggpairs" in evaluation and evaluation["ggally_ggpairs"] == True:
-            rules.append("results/output/"+bmark_setup_title+"/ggally_ggpairs/ggally_ggpairs.done")
+            rules.append("results/output/"+bmark_setup_title +
+                         "/ggally_ggpairs/ggally_ggpairs.done")
 
         # benchmarks
         if "benchmarks" in evaluation and len(evaluation["benchmarks"]["ids"]) > 0:
             rules.append("results/output/"+bmark_setup_title
-                        +"/benchmarks/benchmarks.done")
+                         + "/benchmarks/benchmarks.done")
 
     return rules
 
@@ -209,5 +234,3 @@ def check_system_requirements():
             raise Exception(
                 "You have " + outp + ". Benchpress requires Singularity >= 3.2."
             )
-
-
