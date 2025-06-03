@@ -23,7 +23,7 @@
         "mcmc_traj_plots": [],
         "mcmc_heatmaps": [],
         "mcmc_autocorr_plots": [],
-        "bagging": ["weighted",{"threshold":0.9},{"sampleID":5,"sampleID2":6}]
+        "bagging": ["weighted",{"threshold":0.7},{"sampleID":5,"sampleID2":6}]
       },
       "title": "baggingtest"
     }

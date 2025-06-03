@@ -74,7 +74,10 @@ for p in Path("workflow/rules/evaluation/").iterdir():
         "$ref": "../rules/evaluation/{}/schema.json".format(p.name)
         
     }
-    print(p.name)
+
+with open(configfilename) as json_config:
+    cf = json.load(json_config)
+    validate_bagging_lengths(cf)
 
 
 

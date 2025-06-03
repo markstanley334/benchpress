@@ -1,4 +1,7 @@
 
+import pprint as pp
+
+
 def edge_constraints_tetrad(wildcards):
     if wildcards.edgeConstraints == "None":
         return []
@@ -117,8 +120,7 @@ def get_active_rules(wildcards):
                 "original"]
             graph_types += ["original"]
 
-            # go through all active features and create a done file for each.
-
+            # Go through all active features and create a .done file for each.
             for feature, isactive in evaluation["graph_estimation"].items():
 
                 # These are not features, so skip
@@ -126,8 +128,6 @@ def get_active_rules(wildcards):
                     continue
 
                 if isactive == True:
-                    # Cound the data setups and create a done file for each.
-                    n_comb = 0
                     for sim_setup in bmark_setup["data"]:
                         seed = get_seed_range(sim_setup["seed_range"])
                         adjmat = gen_adjmat_string_from_conf(
@@ -151,6 +151,14 @@ def get_active_rules(wildcards):
                             for graph_type in graph_types:
                                 rules.append("results/output/"+bmark_setup_title+"/graph_estimation/dataset_"+str(
                                     data_index+1)+"/graph_type="+graph_type+"/"+feature+"/"+alg+".done")
+                        seed_range = get_seed_range(sim_setup["seed_range"])
+                        for seed in seed_range:
+                            dataset = str("graph_id=" + str(sim_setup["graph_id"]) + "_parameters_id=" + str(
+                                sim_setup["parameters_id"]) + "_data_id=" + str(sim_setup["data_id"]) + "_seed=" + str(seed))
+                            for alg in active_algorithms(bmark_setup, eval_method="graph_estimation"):
+                                for graph_type in graph_types:
+                                    rules.append("results/output/"+bmark_setup_title+"/graph_estimation/" +
+                                                 dataset+"/graph_type="+graph_type+"/"+feature+"/"+alg+".done")
 
         # mcmc_traj_plots
         if "mcmc_traj_plots" in evaluation and len(evaluation["mcmc_traj_plots"]) > 0:
@@ -234,3 +242,34 @@ def check_system_requirements():
             raise Exception(
                 "You have " + outp + ". Benchpress requires Singularity >= 3.2."
             )
+
+
+def validate_bagging_lengths(config):
+    """
+    Ensure that any weighted‐bagging entry has exactly one weight per
+    algorithm listed in graph_estimation.ids for its benchmark_setup.
+    """
+    bmark = config["benchmark_setup"]
+    alg_ids = bmark["evaluation"]["graph_estimation"]["ids"]
+    n_algs = len(alg_ids)
+
+    bag = bmark["evaluation"]["bagging"]
+
+    if isinstance(bag, dict) and "threshold" not in bag:
+        # this is the weighted bagging case, so we verify that the length of the bagging dictionary is the number of algorithms
+        if len(bag) != n_algs:
+            raise ValueError(
+                f"ERROR: Weighted bagging has {len(bag)} weights but there are {n_algs} algorithms in the ids field! Check your config file."
+            )
+
+    # Also ensure the keys exactly match the alg IDs
+    # simple set difference will be empty if identical string values
+    # not worried about extra keys, as the length is already checked
+    missing = set(alg_ids) - set(bag.keys())
+
+    if missing:
+        raise ValueError(
+            f"ERROR: Weighted bagging keys do not match the alg IDs! Check your config file."
+        )
+    # If we reach here, everything's OK.
+    return
