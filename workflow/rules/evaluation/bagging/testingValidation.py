@@ -65,23 +65,27 @@ def validate_bagging_lengths(config):
     n_algs = len(alg_ids)
     bag = bmark["evaluation"]["bagging"]
 
-    for item in bag:
-        if isinstance(item, dict) and "threshold" not in item:
-            # this is the weighted bagging case, so we verify that the length of the bagging dictionary is the number of algorithms
-            if len(item) != n_algs:
-                raise ValueError(
-                    f"ERROR: Weighted bagging has {len(item)} weights but there are {n_algs} algorithms in the ids field! Check your config file."
-                )
+    if isinstance(bag, list):
+        for item in bag:
+            if isinstance(item, dict) and "threshold" not in item:
+                # this is the weighted bagging case, so we verify that the length of the bagging dictionary is the number of algorithms
+                if len(item) != n_algs:
+                    raise ValueError(
+                        f"ERROR: Weighted bagging has {len(item)} weights but there are {n_algs} algorithms in the ids field! Check your config file."
+                    )
 
-    # Also ensure the keys exactly match the alg IDs. A simple set difference will be empty if identical string values.
-    # We are not worried about extra keys, as the length is already checked
-            missing = set(alg_ids) - set(item.keys())
+        # Also ensure the keys exactly match the alg IDs. A simple set difference will be empty if identical string values.
+        # We are not worried about extra keys, as the length is already checked
+                missing = set(alg_ids) - set(item.keys())
 
-            if missing:
-                raise ValueError(
-                    f"ERROR: Weighted bagging keys do not match the alg IDs! Check your config file."
-                )
+                if missing:
+                    raise ValueError(
+                        f"ERROR: Weighted bagging keys do not match the alg IDs! Check your config file."
+                    )
     # If we reach here, everything's OK.
+    print("--------------------------------")
+    print("ALL TESTS PASSED")
+    print("--------------------------------")
     return
 
 
@@ -99,6 +103,7 @@ for arg in args:
 # print(f"Using config file: {configfilename}")
 # print("--------------------------------")
 
+
 with open(configfilename) as json_config:
     cf = json.load(json_config)
     # print("--------------------------------")
@@ -112,3 +117,6 @@ with open(configfilename) as json_config:
 #######################################################################
 #######################################################################
 #######################################################################
+
+
+# ["weighted",{"threshold":0.7},{"sampleID":5,"sampleID2":6}]

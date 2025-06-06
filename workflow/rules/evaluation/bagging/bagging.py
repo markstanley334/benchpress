@@ -5,29 +5,27 @@ import sys
 import os
 
 # Snakemake injects these for you:
-adjs = snakemake.input.adjs
-bag_cfg = snakemake.params.bagging
+adjs = snakemake.input
+bag_value = snakemake.params.bag_value
 out_csv = snakemake.output[0]
 
 # 1. Load all adjacency matrices into a list of DataFrames
 mats = [pd.read_csv(path, index_col=0) for path in adjs]
 
-# 2. Decide on weights & threshold
-if bag_cfg is None:
-    # No bagging: just copy the first
-    result = mats[0]
-elif bag_cfg == "standard":
+# The null bagging case will not happen here, as in the Snakefile we check that bag_params is not None
+if bag_value == "standard":
     weights = [1/len(mats)] * len(mats)
     threshold = 0.5
 else:
     # bag_cfg == ["weighted", {"threshold":t}, {"id1":w1, ...}]
-    _, thr_obj, weight_obj = bag_cfg
+    _, thr_obj, weight_obj = bag_value
     weights = []
-    # match order of `adjs` by their seed IDs (extract from filename)
+    threshold = thr_obj["threshold"]
+
+    # I don't think this is correct, we can get the name with splicing adjmat=/NAMEHERE/, then maybe some function to get id from name and get weight from weight_obj
     for path in adjs:
         seed = os.path.basename(path).split("seed=")[-1].split("/")[0]
         weights.append(weight_obj.get(seed, 0))
-    threshold = thr_obj["threshold"]
 
     for i in range(len(weights)):
         weights[i] = weights[i] / sum(weights)

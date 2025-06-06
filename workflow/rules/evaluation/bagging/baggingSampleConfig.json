@@ -12,7 +12,7 @@
         "evaluation": {
           "ggally_ggpairs": false,
           "graph_estimation": {
-              "ids": ["sampleID","sampleID2"],
+              "ids": ["sampleID2","sampleID3"],
               "convert_to": ["cpdag"],
               "graphs": true,
               "adjmats": true,

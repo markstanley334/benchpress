@@ -87,12 +87,13 @@ def validate_data_setup(config, data_setup, bmark_setup):
                         " is not an available parameter id.\n"
                         "The available paremeter id´s are:\n" + str(sorted(available_conf_ids)))
 
+
 # validate the data_setup
 for bmark_setup in config["benchmark_setup"]:
-    #print("Benchmark setup")
-    #print(bmark_setup)
+    # print("Benchmark setup")
+    # print(bmark_setup)
     for data_setup in bmark_setup["data"]:
-        #print(data_setup)        
+        # print(data_setup)
         validate_data_setup(config, data_setup, bmark_setup)
 
 
@@ -101,16 +102,16 @@ def validate_graph_estimation(config, bmark_setup):
     If diffplots or graphvizcompare is true, we check if a true graph
     is provided.    
     """
-        
+
     # First check if the graph_estimation is active
     if "graph_estimation" in bmark_setup["evaluation"]:
-        
+
         # Check that all ids in the graph_estimation actually exist.
         for benchmarksitem in bmark_setup["evaluation"]["graph_estimation"]["ids"]:
             if benchmarksitem not in available_conf_ids:
                 raise Exception(
-                    benchmarksitem + " not available.\nThe available id's are:\n{ids}".format(ids=sorted(available_conf_ids)))                
-        
+                    benchmarksitem + " not available.\nThe available id's are:\n{ids}".format(ids=sorted(available_conf_ids)))
+
         graph_estimation = bmark_setup["evaluation"]["graph_estimation"]
         if graph_estimation["diffplots"] or graph_estimation["graphvizcompare"]:
             # Loop over data setups in benchmark_setup and check if graph_id is provided everywhere
@@ -134,6 +135,7 @@ def valid_path(run_id: Optional[str]) -> bool:
         return False
 
     return True
+
 
 def idtoalg(run_id: str) -> Optional[Tuple[str, dict]]:
     """ Returns the algorithm name that the id belongs to, otherwise None """
@@ -161,10 +163,10 @@ def validate_algorithms():
     for module, module_obj_list in config["resources"]["structure_learning_algorithms"].items():
         for module_obj in module_obj_list:
             if 'input_algorithm_id' in module_obj:
-                                
+
                 if isinstance(module_obj['input_algorithm_id'], list):
-                    for input_graph in module_obj['input_algorithm_id']:                        
-                        path = valid_path(input_graph)                                                
+                    for input_graph in module_obj['input_algorithm_id']:
+                        path = valid_path(input_graph)
                         if not path:
                             raise Exception(
                                 f"In algorithm {module}, 'input_algorithm_id' {input_graph} is not available in the config file, or the associated config has parameters with multiple values!")
@@ -177,7 +179,39 @@ def validate_algorithms():
                             f"In algorithm {module}, 'input_algorithm_id' {module_obj['input_algorithm_id']} is not available in the config file, or the associated config has parameters with multiple values!")
 
 
+def validate_bagging_lengths(config):
+    """
+    Ensures that the bagging length is the same as the number of algorithms and that the keys exactly match the alg IDs
+    """
+    bmark = config["benchmark_setup"][0]
+    alg_ids = bmark["evaluation"]["graph_estimation"]["ids"]
+    n_algs = len(alg_ids)
+    bag = bmark["evaluation"]["bagging"]
+
+    if isinstance(bag, list):  # ensure that its the weighted bagging case
+        for item in bag:
+            if isinstance(item, dict) and "threshold" not in item:
+                # this is the weighted bagging case, so we verify that the length of the bagging dictionary is the number of algorithms
+                if len(item) != n_algs:
+                    raise ValueError(
+                        f"ERROR: Weighted bagging has {len(item)} weights but there are {n_algs} algorithms in the ids field! Check your config file."
+                    )
+
+        # Also ensure the keys exactly match the alg IDs. A simple set difference will be empty if identical string values.
+        # We are not worried about extra keys, as the length is already checked
+                missing = set(alg_ids) - set(item.keys())
+
+                if missing:
+                    raise ValueError(
+                        f"ERROR: Weighted bagging keys do not match the alg IDs! Check your config file."
+                    )
+    # If we reach here, everything's OK.
+    return
+
+
 validate_algorithms()
 
 for bmark_setup in config["benchmark_setup"]:
     validate_graph_estimation(config, bmark_setup)
+
+validate_bagging_lengths(config)

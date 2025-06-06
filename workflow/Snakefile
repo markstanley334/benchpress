@@ -75,9 +75,6 @@ for p in Path("workflow/rules/evaluation/").iterdir():
         
     }
 
-with open(configfilename) as json_config:
-    cf = json.load(json_config)
-    validate_bagging_lengths(cf)
 
 
 
@@ -213,4 +210,11 @@ rule convert_edge_constraints:
         package = "{package}"
     script:
         "scripts/utils/convert_edge_constraints_all.R"
+
+
+
+for key,value in pattern_strings.items():
+    print("--------------------------------")
+    print(key,value)
+    print("--------------------------------")
 

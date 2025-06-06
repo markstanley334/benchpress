@@ -1,4 +1,5 @@
-# rules/evaluation/bagging/rule.smk
+# This is the bagging rule. It takes in the adjmat.csv files and performs bagging over them.
+
 rule bagging:
     """
     Perform standard or weighted bagging over multiple
@@ -6,20 +7,21 @@ rule bagging:
     """
     # This wildcard picks up the graph_type from the output path:
     output:
-        adjmat="results/evaluation/bagging/graph_type={graph_type}/bagged_adjmat.csv"
+        adjmat="results/evaluation/bagging/bagged_adjmat.csv"
+        donefile="results/output/"+bmark_setup_title +"/bagging/bagging.done"
     # Expand all the per‐seed adjmat inputs using the seed_range from your config:
     input:
-        adjs=lambda wc, config: expand(
-            "results/evaluation/graph_estimation/graph_type={graph_type}/seed={seed}/adjmat.csv",
-            graph_type=wc.graph_type,
-            seed=list(range(
-                config["benchmark_setup"][0]["data"][0]["seed_range"][0],
-                config["benchmark_setup"][0]["data"][0]["seed_range"][1] + 1
-            ))
-        )
+        expand(matrix_filename="{output_dir}/adjmat_estimate/" # this is all combinations of the adjmat paths
+        "adjmat=/{adjmat_string}/"
+        "parameters=/{param_string}/"
+        "data=/{data_string}/"
+        "algorithm=/{alg_string}/"
+        "seed={seed}/"
+        "adjmat.csv")
+
     # Pull in the bagging spec (null / "standard" / weighted array):
     params:
-        bag_cfg=lambda wc, config: config["benchmark_setup"][0]["bagging"]
+        bag_value=lambda wc, config: config["benchmark_setup"][0]["bagging"]
     # Delegate all the heavy lifting to your Python script
     script:
         "rules/evaluation/bagging/bagging.py"

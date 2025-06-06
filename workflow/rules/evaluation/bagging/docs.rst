@@ -22,7 +22,7 @@ The standard bagging method gives all algorithms equal weight in the final predi
 The weighted bagging method allows for custom weights to be assigned to each algorithm, which can be specified in the configuration. The threshold can also be adjusted to control the inclusion of edges based on the proportion of votes.
 
 
-
-# # ── Add the new 'bagging' property to each benchmark_setup entry ──
-# bmk_props = schema["properties"]["benchmark_setup"]["items"]["properties"]
-# bmk_props["bagging"] = {"$ref": "workflow/rules/evaluation/bagging/schema.json"}
+# validate the bagging lengths
+with open(configfilename) as json_config:
+    cf = json.load(json_config)
+    validate_bagging_lengths(cf)
