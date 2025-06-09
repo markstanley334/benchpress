@@ -12,32 +12,57 @@ out_csv = snakemake.output[0]
 # 1. Load all adjacency matrices into a list of DataFrames
 mats = [pd.read_csv(path, index_col=0) for path in adjs]
 
-# The null bagging case will not happen here, as in the Snakefile we check that bag_params is not None
-if bag_value == "standard":
-    weights = [1/len(mats)] * len(mats)
-    threshold = 0.5
+
+print("--------------------------------")
+print("here is the bagging parameters")
+print(bag_value)
+print("--------------------------------")
+
+print("--------------------------------")
+print("Here are the paths to the adjmats:")
+print(adjs)
+print("--------------------------------")
+
+print("--------------------------------")
+print("Here are the adjmats:")
+print(mats)
+print("--------------------------------")
+
+
+if bag_value is None:
+    # No bagging: blank csv file as output:
+    pd.DataFrame().to_csv(out_csv)
 else:
-    # bag_cfg == ["weighted", {"threshold":t}, {"id1":w1, ...}]
-    _, thr_obj, weight_obj = bag_value
-    weights = []
-    threshold = thr_obj["threshold"]
+    if bag_value == "standard":
+        weights = [1/len(mats)] * len(mats)
+        threshold = 0.5
+    else:
+        # bag_cfg == ["weighted", {"threshold":t}, {"id1":w1, ...}]
+        _, thr_obj, weight_obj = bag_value
+        weights = []
+        threshold = thr_obj["threshold"]
 
-    # I don't think this is correct, we can get the name with splicing adjmat=/NAMEHERE/, then maybe some function to get id from name and get weight from weight_obj
-    for path in adjs:
-        seed = os.path.basename(path).split("seed=")[-1].split("/")[0]
-        weights.append(weight_obj.get(seed, 0))
+        name_weight = dict()
+        for key, value in weight_obj.items():
+            name_weight[idtoalg(key)] = value
 
-    for i in range(len(weights)):
-        weights[i] = weights[i] / sum(weights)
+        # get the name of the adjmat
+        for path in adjs:
 
+            # get the name of the adjmat
+            parts = path.split('adjmat=/')
+            if len(parts) > 1:
+                name = parts[1].split('/')[0]
 
-# 3. Compute weighted average adjacency
-stack = np.stack([df.values for df in mats], axis=2)
-avg_mat = np.tensordot(stack, weights, axes=([2], [0]))
+            weights.append(name_weight[name])
 
-# 4. Threshold to binary edges
-bin_mat = (avg_mat >= threshold).astype(int)
+        for i in range(len(weights)):
+            weights[i] = weights[i] / sum(weights)
+    # Compute weighted average adjacency
+    avg_df = sum(w * df for w, df in zip(weights, mats))
 
-# 5. Save back out
-pd.DataFrame(bin_mat, index=mats[0].index, columns=mats[0].columns) \
-  .to_csv(out_csv)
+    # Threshold to binary edges
+    bin_mat = (avg_df >= threshold).astype(int)
+
+    # Save back out
+    pd.DataFrame(bin_mat).to_csv(out_csv, index=False)

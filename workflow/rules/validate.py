@@ -214,4 +214,8 @@ validate_algorithms()
 for bmark_setup in config["benchmark_setup"]:
     validate_graph_estimation(config, bmark_setup)
 
-validate_bagging_lengths(config)
+
+# if bagging key exists and is not null, validate the bagging lengths.
+if "bagging" in config["benchmark_setup"][0]["evaluation"]:
+    if config["benchmark_setup"][0]["evaluation"]["bagging"] is not None:
+        validate_bagging_lengths(config)
