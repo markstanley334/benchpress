@@ -4,6 +4,10 @@ import pandas as pd
 import sys
 import os
 
+print("--------------------------------")
+print("BAGGING PYTHON SCRIPT")
+print("--------------------------------")
+
 # Snakemake injects these for you:
 adjs = snakemake.input
 bag_value = snakemake.params.bag_value
@@ -56,8 +60,9 @@ else:
 
             weights.append(name_weight[name])
 
-        for i in range(len(weights)):
-            weights[i] = weights[i] / sum(weights)
+        weights = np.array(weights)
+        weights = weights / np.sum(weights)
+
     # Compute weighted average adjacency
     avg_df = sum(w * df for w, df in zip(weights, mats))
 
