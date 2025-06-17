@@ -11,25 +11,6 @@ include: "../graph_plots/filenames.py"
 bmark_setup = config["benchmark_setup"][0]
 bmark_setup_title = bmark_setup["title"]
 
-# def adjmats():
-
-#     ret = expand("{output_dir}/adjmat_estimate/adjmat=/{adjmat_string}/parameters=/{param_string}/data=/{data_string}/algorithm=/{alg_string}/seed={seed}/adjmat.csv")
-#     # ret = [[[[expand("{output_dir}/adjmat_estimate/adjmat=/{adjmat_string}/parameters=/{param_string}/data=/{data_string}/algorithm=/{alg_string}/seed={seed}/adjmat.csv",
-#     #         output_dir="results",
-#     #         alg_string=json_string[alg_conf["id"]],
-#     #         **alg_conf,
-#     #         seed=seed,
-#     #         adjmat_string=gen_adjmat_string_from_conf(sim_setup["graph_id"], seed), 
-#     #         param_string=gen_parameter_string_from_conf(sim_setup["parameters_id"], seed),
-#     #         data_string=gen_data_string_from_conf(sim_setup["data_id"], seed, seed_in_path=False))
-#     # ]]]]
-#             # for seed in get_seed_range(sim_setup["seed_range"])]
-#             # for sim_setup in config["benchmark_setup"]["data"]]
-#             # for alg_conf in config["resources"]["structure_learning_algorithms"][alg] 
-#                 #if alg_conf["id"] in config["benchmark_setup"]["evaluation"]["graph_plots"]["ids"]]
-#             # for alg in active_algorithms("graph_plots")]
-    
-#     return ret
 
 if config["benchmark_setup"][0]["evaluation"]["bagging"] is not None: # we don't want to generate any csv file if bagging is null (rule will not be triggered)
     rule bagging:

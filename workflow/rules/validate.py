@@ -192,6 +192,13 @@ def validate_bagging_lengths(config):
         for item in bag:
             if isinstance(item, dict) and "threshold" not in item:
                 # this is the weighted bagging case, so we verify that the length of the bagging dictionary is the number of algorithms
+
+                # check that no weights are zero
+                if not (sum(item.values()) > 0.0):
+                    raise ValueError(
+                        f"ERROR: Weighted bagging has a sum of weights of 0! Check your config file."
+                    )
+
                 if len(item) != n_algs:
                     raise ValueError(
                         f"ERROR: Weighted bagging has {len(item)} weights but there are {n_algs} algorithms in the ids field! Check your config file."

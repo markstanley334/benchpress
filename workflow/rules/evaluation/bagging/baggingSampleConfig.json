@@ -12,7 +12,7 @@
         "evaluation": {
           "ggally_ggpairs": false,
           "graph_estimation": {
-              "ids": ["sampleID2","sampleID3"],
+              "ids": ["mat1","mat2","mat3"],
               "convert_to": ["cpdag"],
               "graphs": true,
               "adjmats": true,
@@ -23,7 +23,7 @@
           "mcmc_traj_plots": [],
           "mcmc_heatmaps": [],
           "mcmc_autocorr_plots": [],
-          "bagging": ["weighted",{"threshold":0.7},{"sampleID":5,"sampleID2":6}]
+          "bagging": ["weighted",{"threshold":0.7},{"mat1":0,"mat2":0,"mat3":0}]
         },
         "title": "baggingtest"
       }
