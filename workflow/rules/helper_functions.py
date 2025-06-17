@@ -129,28 +129,6 @@ def get_active_rules(wildcards):
 
                 if isactive == True:
                     for sim_setup in bmark_setup["data"]:
-                        seed = get_seed_range(sim_setup["seed_range"])
-                        adjmat = gen_adjmat_string_from_conf(
-                            sim_setup["graph_id"], seed),
-                        parameters = gen_parameter_string_from_conf(
-                            sim_setup["parameters_id"], seed),
-                        data = gen_data_string_from_conf(
-                            sim_setup["data_id"], seed, seed_in_path=False)
-
-                        # count total number of combinations of the three above
-                        n_data = len(data) if isinstance(
-                            data, list) and len(data) != 0 else 1
-                        n_parameters = len(parameters) if isinstance(
-                            parameters, list) and parameters != [] else 1
-                        n_adjmat = len(adjmat) if isinstance(
-                            adjmat, list) and adjmat != [] else 1
-                        n_comb += n_data*n_parameters*n_adjmat if n_data*n_parameters*n_adjmat != 0 else 1
-
-                    for data_index in range(n_comb):
-                        for alg in active_algorithms(bmark_setup, eval_method="graph_estimation"):
-                            for graph_type in graph_types:
-                                rules.append("results/output/"+bmark_setup_title+"/graph_estimation/dataset_"+str(
-                                    data_index+1)+"/graph_type="+graph_type+"/"+feature+"/"+alg+".done")
                         seed_range = get_seed_range(sim_setup["seed_range"])
                         for seed in seed_range:
                             dataset = str("graph_id=" + str(sim_setup["graph_id"]) + "_parameters_id=" + str(
