@@ -13,6 +13,14 @@ adjs = snakemake.input
 bag_value = snakemake.params.bag_value
 out_csv = snakemake.output[0]
 
+
+# print out the input:
+# print("--------------------------------")
+# print("Here are the input paths (from bagging.py):")
+# print(adjs)
+# print("--------------------------------")
+
+
 # 1. Load all adjacency matrices into a list of DataFrames
 mats = [pd.read_csv(path, index_col=0) for path in adjs]
 
@@ -22,16 +30,15 @@ print("here is the bagging parameters")
 print(bag_value)
 print("--------------------------------")
 
-print("--------------------------------")
-print("Here are the paths to the adjmats:")
-print(adjs)
-print("--------------------------------")
 
-print("--------------------------------")
-print("Here are the adjmats:")
-print(mats)
-print("--------------------------------")
+# print("--------------------------------")
+# print("Here are the adjmats (from bagging.py):")
+# print(mats)
+# print("--------------------------------")
 
+if len(mats) == 0:
+    print("ERROR: No adjacency matrices found, try adding some algorithms to the config file or check the input paths")
+    exit(1)
 
 if bag_value is None:
     # No bagging: blank csv file as output:
@@ -71,3 +78,13 @@ else:
 
     # Save back out
     pd.DataFrame(bin_mat).to_csv(out_csv, index=False)
+
+    # print("--------------------")
+    # print("Here is the final bagging file:")
+    # print(bin_mat)
+    # print("--------------------")
+
+    # print("--------------------")
+    # print("Here is the output path: ")
+    # print(out_csv)
+    # print("--------------------")

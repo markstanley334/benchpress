@@ -27,9 +27,9 @@
         "mcmc_heatmaps": [],
         "mcmc_autocorr_plots": [],
         "bagging": "standard",
-        "graph_plots": []
+        "graph_plots": ["boss-sem-bic","grasp-sem-bic"]
       },
-      "title": "gen_bagtest_1"
+      "title": "bagtest_001"
     }
   ],
   "resources": {
@@ -47,13 +47,7 @@
           "samplePrior": 0,
           "semBicStructurePrior": 0,
           "penaltyDiscount": [
-            0.1,
-            0.5,
-            1,
-            1.5,
-            2.0,
-            2.5,
-            3.0
+            1
           ],
           "timeout": null,
           "edgeConstraints": null 
@@ -68,16 +62,10 @@
           "samplePrior": 0,
           "semBicStructurePrior": 0,
           "penaltyDiscount": [
-            0.1,
-            0.5,
-            1,
-            1.5,
-            2.0,
-            2.5,
-            3.0
+            1
           ],
           "timeout": null,
-          "edgeConstraints": "geneticConstraints.json"
+          "edgeConstraints": null
         }
       ],
       "gcastle_notears": [

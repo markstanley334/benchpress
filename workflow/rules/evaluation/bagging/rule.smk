@@ -12,6 +12,27 @@ bmark_setup = config["benchmark_setup"][0]
 bmark_setup_title = bmark_setup["title"]
 
 
+
+# the input from the adjmats() function is many nested lists so we need to flatten it into the format: ['str1', 'str2', 'str3', ...]
+def flatten(list_to_flatten):
+    result = []
+    for item in list_to_flatten:
+        if isinstance(item, list):
+            result.extend(flatten(item))
+        else:
+            result.append(item)
+    print("--------------------------------")
+    print("Here is the flattened list:")
+    print(result)
+    print("--------------------------------")
+    return result
+
+
+
+def get_csv_adjmats(bmark_setup):
+    return flatten(adjmats(bmark_setup))
+
+
 if config["benchmark_setup"][0]["evaluation"]["bagging"] is not None: # we don't want to generate any csv file if bagging is null (rule will not be triggered)
     rule bagging:
         """
@@ -28,7 +49,7 @@ if config["benchmark_setup"][0]["evaluation"]["bagging"] is not None: # we don't
 
         # Pull in the bagging spec (null / "standard" / weighted array):
         params:
-            bag_value=lambda wc, config: config["benchmark_setup"][0]["evaluation"]["bagging"]
+            bag_value=config["benchmark_setup"][0]["evaluation"]["bagging"]
         # Delegate all the heavy lifting to your Python script
         script:
             "bagging.py"
@@ -56,12 +77,13 @@ if config["benchmark_setup"][0]["evaluation"]["bagging"] is not None: # we don't
 
     rule complete_bagging:
         input:
+            "results/evaluation/bagging/"+bmark_setup_title+"/bagged_adjmat.csv",
             # "results/evaluation/bagging/"+bmark_setup_title+"/bagged_graph.png",
-            "results/evaluation/bagging/"+bmark_setup_title+"/bagged_adjmat.png"
+            # "results/evaluation/bagging/"+bmark_setup_title+"/bagged_adjmat.png"
         output:
-            donefile="results/output/"+bmark_setup_title +"/bagging/bagging.done"
+            donefile="results/evaluation/bagging/"+bmark_setup_title +"/bagging.done"
         shell:
             """
-            touch {donefile}
-            echo {donefile}
+            touch {output.donefile}
+            echo {output.donefile}
             """

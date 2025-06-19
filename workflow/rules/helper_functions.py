@@ -110,8 +110,8 @@ def get_active_rules(wildcards):
         bmark_setup_title = bmark_setup["title"]
 
         if "bagging" in evaluation:
-            rules.append("results/output/"+bmark_setup_title +
-                         "/bagging/bagging.done")
+            rules.append("results/evaluation/bagging/"+bmark_setup_title +
+                         "/bagging.done")
 
         # graph_estimation
         if "graph_estimation" in evaluation and evaluation["graph_estimation"]["ids"] != []:
